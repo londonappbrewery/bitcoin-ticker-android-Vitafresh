@@ -9,7 +9,7 @@
     android:ellipsize="marquee"
     android:text="@string/label_error_text"
     android:textColor="@color/black"
-    android:textSize="30sp"
+    android:textSize="20sp"
     android:background="@drawable/color_selector"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"

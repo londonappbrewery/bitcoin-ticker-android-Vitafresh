@@ -9,19 +9,21 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.Toast;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import cz.msebera.android.httpclient.Header;
 
 
 public class MainActivity extends AppCompatActivity {
 
     // Constants:
     // TODO: Create the base URL
-    private final String BASE_URL = "https://apiv2.bitcoinaverage.com/indices/global/ticker/BTCUSD";
+    private final String BASE_URL = "https://apiv2.bitcoinaverage.com/indices/global/ticker/";
     private final String API_KEY = "YjAyNDk2ODEyOTVmNDIyYmI1M2NjMjM3NGM4YjY0MTk";
 
     private String url_full;
@@ -53,7 +55,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 // An item selected
-                Log.d("Bitcoin","SpinSelected: " + adapterView.getItemAtPosition(i).toString());
+                String currency = adapterView.getItemAtPosition(i).toString();
+                Log.d("Bitcoin","SpinSelected: " + currency);
+
+                String full_url = getUrlFull(currency);
+                Log.d("Bitcoin","url: " + full_url);
+                getBitcoinClient(full_url);
+
+                //letsDoSomeNetworking(full_url);
             }
 
             @Override
@@ -64,6 +73,33 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    private String getUrlFull(String currency){
+        String url = BASE_URL + "BTC" + currency;
+        return url;
+    };
+
+    private void getBitcoinClient(String url){
+        Log.d("Bitcoin", "getBitcoinClient");
+
+        AsyncHttpClient clientHTTP = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        clientHTTP.get(url, new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("Bitcoin","getBitcoinClient onSuccess");
+                Log.d("Bitcoin","json: " + response.toString());
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResponse) {
+                Log.d("Bitcoin","getBitcoinClient onFailure");
+                Log.d("Bitcoin","Status code: " + statusCode);
+                Log.e("Bitcoin", e.toString());
+            }
+        });
+
+    };
 
     // TODO: complete the letsDoSomeNetworking() method
     private void letsDoSomeNetworking(String url) {

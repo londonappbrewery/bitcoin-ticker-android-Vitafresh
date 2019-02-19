@@ -14,6 +14,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
@@ -89,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d("Bitcoin","getBitcoinClient onSuccess");
                 Log.d("Bitcoin","json: " + response.toString());
+                Double value = getBtcValue(response);
+                updateUI(value.toString());
             }
 
             @Override
@@ -100,6 +103,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
     };
+
+    private Double getBtcValue(JSONObject json){
+        Double value = 0.0;
+        try {
+            value = json.getDouble("ask");
+            Log.d("Bitcoin","valueS: " + value.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return value;
+    };
+
+    private void updateUI(String valueS){
+        mPriceTextView.setText(valueS);
+    }
 
     // TODO: complete the letsDoSomeNetworking() method
     private void letsDoSomeNetworking(String url) {
